@@ -10,7 +10,7 @@ d=1.5
 noofpulls=1
 objectiveB=.51
 
-def AgentChoice(B_probability, average_payoff, average_cumulative_payoff, t, G: nx.Graph):
+def AgentChoice(B_probability, average_payoff, average_cumulative_payoff, t, G):
 	evidence_givenB=[-1 for n in G.nodes()]
 	B_posterior_probability=[0 for n in G.nodes()]
 	for n in G.nodes():
@@ -175,4 +175,4 @@ def run_complete():
 
 run_complete()
 
-print(success_matrix_complete)
+print success_matrix_complete
