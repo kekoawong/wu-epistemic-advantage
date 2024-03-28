@@ -14,6 +14,7 @@ def AgentChoice(B_probability: list[float], average_payoff: list[list[float]], a
     evidence_givenB: list[int] = [-1 for _ in G.nodes()]
     B_posterior_probability: list[float] = [0 for _ in G.nodes()]
     
+    # initialize the new list
     for n in G.nodes():
         B_posterior_probability[n] = B_probability[n]
         
@@ -35,8 +36,10 @@ def AgentChoice(B_probability: list[float], average_payoff: list[list[float]], a
     random.shuffle(lst_2)
     random.shuffle(lst)
     
+    # update all the nodes based on their lists
     for a in lst_2:
         for n in lst:
+            # why is she only updating if the probability is greater than 0.5? Should all nodes listen, no matter the
             if B_probability[n] > 0.5:
                 if ((a >= (len(lst) / d)) and (n >= (len(lst) / d))) or (a < (len(lst) / d)):
                     P_i_E[a][n] = ((objectiveB ** evidence_givenB[n]) * ((1 - objectiveB) ** (noofpulls - evidence_givenB[n])) * B_posterior_probability[a]) + (((1 - objectiveB) ** evidence_givenB[n]) * (objectiveB ** (noofpulls - evidence_givenB[n])) * (1 - B_posterior_probability[a]))
@@ -47,17 +50,55 @@ def AgentChoice(B_probability: list[float], average_payoff: list[list[float]], a
 
 def initialize_graph(numNodes: int):
     initialNodeData = {
-        'probability': 0,
+        # bandit arm A is set to a 0.5 success rate in the decision process
+        'a_success_rate': 0.5,
+        # bandit arm B is a learned parameter for the agent
+        'b_success_rate': 0,
+        # agent evidence learned, will be used to update their belief and others in the network
+        'b_evidence': None,
     }
     graph: nx.Graph = nx.complete_graph(numNodes)
-    # Set the initial node data for each node
+    # Initialize all the nodes to this initial data
     for node in graph.nodes():
         graph.nodes[node].update(initialNodeData)
 
     return graph
 
-def timestep():
-    return
+def timestep(graph: nx.Graph):
+    # run the experiments in all the nodes
+    for _node, nodeData in graph.nodes(data=True):
+        # agent pulls the "a" bandit arm
+        if nodeData['a_success_rate'] > nodeData['b_success_rate']:
+            # agent won't have any new evidence gathered for b
+            nodeData['b_evidence'] = None
+            continue
+
+        # agent pulls the "b" bandit arm
+        else:
+            # run the experiment
+            num_trials = 1
+            success_rate = 0.51
+            nodeData['b_evidence'] = int(np.random.binomial(num_trials, success_rate, size=None))
+
+    # define function to calculate posterior belief
+    def calculate_posterior(pH: float, pEH: float):
+        pE = pEH * pH + (1 - pEH) * (1 - pH)
+        return (pEH * pH) / pE
+    
+    # update the beliefs, based on evidence and neighbors
+    for node, nodeData in graph.nodes(data=True):
+        neighbors = graph.neighbors(node)
+        # update belief of "b" on own evidence gathered
+        if nodeData['b_evidence'] is not None:
+            nodeData['b_success_rate'] = calculate_posterior(nodeData['b_success_rate'], nodeData['b_evidence'])
+        
+        # update node belief of "b" based on evidence gathered by neighbors
+        for neighbor_node in neighbors:
+            neighbor_evidence = graph.nodes[neighbor_node]['b_evidence']
+            if neighbor_evidence is not None:
+                nodeData['b_success_rate'] = calculate_posterior(nodeData['b_success_rate'], neighbor_evidence)
+
+    return graph
 
 polarization_count = 0.0
 win_count = 0.0
@@ -77,6 +118,7 @@ total_tally_false_belief_minority = 0.0
 success_matrix_complete = []
 
 def run_complete():
+    # for all the different graph sizes
     for k in nodes_complete:
         global polarization_count
         global win_count
@@ -108,6 +150,7 @@ def run_complete():
         average_cumulative_payoff = [0 for _ in range(k)]
         
         s = 0
+        # a new simulation, initialize the graph
         while s < simulation_runs:
             G = nx.complete_graph(k)
             t = 0
@@ -121,16 +164,24 @@ def run_complete():
             win = [False for _ in range(k)]
             lose = [False for _ in range(k)]
             
+            # This is the timestep function, initialization complete
             while t <= max_iterations:
+
+                # make agent choice with the inputted metrics in the graph
                 AgentChoice(B_probability, average_payoff, average_cumulative_payoff, t, G)
                 
                 for n in G.nodes():
+                    # if timestep less than 30, add the average beliefs to the timestep tracker
+                    # B_probability can just be in the node
+                    # QUESTION: why is this just when the timestep is less than 0?
                     if t < 30:
                         average_beliefs[t][n] += B_probability[n]
                 
+                # iterate timestep
                 t += 1
                 
                 for n in G.nodes():
+                    # this is all just metric tracking
                     win[n] = (B_probability[n] > 0.99)
                     lose[n] = (B_probability[n] <= 0.5)
                     
@@ -147,6 +198,7 @@ def run_complete():
                     else:
                         win_turn[0][n] = 0
                 
+                # break condition for if all are win
                 if all(win):
                     win_count += 1
                     
@@ -169,6 +221,7 @@ def run_complete():
                     community_win_turn += t
                     break
                 
+                # break condition if all are losing
                 elif all(lose):
                     lose_count += 1
                     
@@ -185,6 +238,7 @@ def run_complete():
                                 total_tally_false_belief_minority += 1
                     break
                 
+                # break condition if all are polarized
                 elif all(polarized):
                     polarization_count += 1
                     
@@ -209,8 +263,10 @@ def run_complete():
                         win_turn[0][n] = 0
                     break
                 
+            # increment trial number
             s += 1
             
+        # append all trial numbers to results
         success_matrix_complete.append([k, (polarization_count / simulation_runs), (win_count / simulation_runs), (lose_count / simulation_runs), polarization_count, win_count, win_turn[1], community_win_turn, average_payoff, average_beliefs, average_cumulative_payoff])
 
 run_complete()
