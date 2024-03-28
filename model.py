@@ -36,6 +36,8 @@ def timestep(graph: nx.Graph):
 
     # define function to calculate posterior belief
     def calculate_posterior(pH: float, pEH: float):
+        if pH <= 0 or pH >= 1: 
+            return pH
         pE = pEH * pH + (1 - pEH) * (1 - pH)
         return (pEH * pH) / pE
     
@@ -54,8 +56,8 @@ def timestep(graph: nx.Graph):
 
     return graph
 
-# mainGraph = initialize_graph(15)
-# timestamps = 50
-# for i in range(timestamps):
-#     timestep(mainGraph)
-# print(mainGraph)
+mainGraph = initialize_graph('wheel', 15)
+timestamps = 50
+for i in range(timestamps):
+    timestep(mainGraph)
+print(mainGraph)
