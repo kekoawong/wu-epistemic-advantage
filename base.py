@@ -39,7 +39,7 @@ def AgentChoice(B_probability: list[float], average_payoff: list[list[float]], a
     # update all the nodes based on their lists
     for a in lst_2:
         for n in lst:
-            # why is she only updating if the probability is greater than 0.5? Should all nodes listen, no matter the
+            # why is she only updating if the probability is greater than 0.5? Should all nodes listen, no matter the bandit arm that they pull?
             if B_probability[n] > 0.5:
                 if ((a >= (len(lst) / d)) and (n >= (len(lst) / d))) or (a < (len(lst) / d)):
                     P_i_E[a][n] = ((objectiveB ** evidence_givenB[n]) * ((1 - objectiveB) ** (noofpulls - evidence_givenB[n])) * B_posterior_probability[a]) + (((1 - objectiveB) ** evidence_givenB[n]) * (objectiveB ** (noofpulls - evidence_givenB[n])) * (1 - B_posterior_probability[a]))
