@@ -23,6 +23,7 @@ for a in lst_2:
 ```
 Question 1: what is this P_i_E list calculating/representing? Is it just part of the calculation updating the posterior belief?
 Question 2: How is she checking if a node is a neighbor? Is this the second nested if statement?
+Question 3: General - does it matter the order in which you update a bayesian agent's beliefs? Does the order matter in determining the outcome?
 
 I changed this code to the following:
 ```py
@@ -59,10 +60,11 @@ break
 ### Metrics
 In the AgentChoice function, why is she keeping track of the `average_payoff` and `average_cumulative payoff`? Is this just to display for visualizations?
 
-When do I update the node's belief? Should I update it on the evidence, then on its neighbors beliefs? Or do I update it all at once? If all at once, how do I stop it from not updating from partial beliefs? Do I update it based on old beliefs?
+
 * Seems to update just on the evidence of the neighbors, this is unchanging.
 If the agent choose bandit arm A, can they still listen to their neighbors and update their beliefs?
 
 ## Thoughts
-* Could extend the model, she currently updates on beliefs, could update on evidence only
+* Could extend the model, she currently updates on evidence, could update on beliefs of other agents
+    * If all at once, how do I stop it from not updating from partial beliefs? For instance, these beliefs may be recursively based on one another in the surrounding network.
 * Additionally, with high trust in "domain expert" could take the stated belief as fact (the agent updates their own belief fully to match). This would converge on the ideas very quickly.
