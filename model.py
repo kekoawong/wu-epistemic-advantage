@@ -7,7 +7,7 @@ def initialize_graph(graphType: Literal['cycle', 'wheel', 'complete'], numNodes:
     graph: nx.Graph = nx.complete_graph(numNodes)
     # Initialize all the nodes to this initial data
     for node in graph.nodes():
-        initialNodeData = {
+        initial_data = {
             # bandit arm A is set to a 0.5 success rate in the decision process
             'a_success_rate': 0.5,
             # bandit arm B is a learned parameter for the agent. Initialize randomly
@@ -15,24 +15,24 @@ def initialize_graph(graphType: Literal['cycle', 'wheel', 'complete'], numNodes:
             # agent evidence learned, will be used to update their belief and others in the network
             'b_evidence': None,
         }
-        graph.nodes[node].update(initialNodeData)
+        graph.nodes[node].update(initial_data)
 
     return graph
 
 def timestep(graph: nx.Graph):
     # run the experiments in all the nodes
-    for _node, nodeData in graph.nodes(data=True):
+    for _node, node_data in graph.nodes(data=True):
         # agent pulls the "a" bandit arm
-        if nodeData['a_success_rate'] > nodeData['b_success_rate']:
+        if node_data['a_success_rate'] > node_data['b_success_rate']:
             # agent won't have any new evidence gathered for b
-            nodeData['b_evidence'] = None
+            node_data['b_evidence'] = None
 
         # agent pulls the "b" bandit arm
         else:
             # run the experiment
-            num_trials = 1
+            num_pulls = 1
             success_rate = 0.51
-            nodeData['b_evidence'] = int(np.random.binomial(num_trials, success_rate, size=None))
+            node_data['b_evidence'] = int(np.random.binomial(num_pulls, success_rate, size=None))
 
     # define function to calculate posterior belief
     def calculate_posterior(pH: float, pEH: float):
@@ -40,17 +40,17 @@ def timestep(graph: nx.Graph):
         return (pEH * pH) / pE
     
     # update the beliefs, based on evidence and neighbors
-    for node, nodeData in graph.nodes(data=True):
+    for node, node_data in graph.nodes(data=True):
         neighbors = graph.neighbors(node)
         # update belief of "b" on own evidence gathered
-        if nodeData['b_evidence'] is not None:
-            nodeData['b_success_rate'] = calculate_posterior(nodeData['b_success_rate'], nodeData['b_evidence'])
+        if node_data['b_evidence'] is not None:
+            node_data['b_success_rate'] = calculate_posterior(node_data['b_success_rate'], node_data['b_evidence'])
         
         # update node belief of "b" based on evidence gathered by neighbors
         for neighbor_node in neighbors:
             neighbor_evidence = graph.nodes[neighbor_node]['b_evidence']
             if neighbor_evidence is not None:
-                nodeData['b_success_rate'] = calculate_posterior(nodeData['b_success_rate'], neighbor_evidence)
+                node_data['b_success_rate'] = calculate_posterior(node_data['b_success_rate'], neighbor_evidence)
 
     return graph
 
