@@ -36,12 +36,8 @@ def timestep(graph: nx.Graph):
 
     # define function to calculate posterior belief
     def calculate_posterior(pH: float, pEH: float):
-        try:
-            pE = pEH * pH + (1 - pEH) * (1 - pH)
-            return (pEH * pH) / pE
-        except:
-            print("Error with parameters", pH, pEH)
-            return (pEH * pH) / pE
+        pE = pEH * pH + (1 - pEH) * (1 - pH)
+        return (pEH * pH) / pE
     
     # update the beliefs, based on evidence and neighbors
     for node, nodeData in graph.nodes(data=True):
