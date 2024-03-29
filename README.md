@@ -4,7 +4,7 @@ A model of the epistemic advantage at the margins
 ## Questions
 
 ### Agent Choice - Updating Beliefs
-This is the code for updating beliefs after the new evidence is calculated
+This is Wu's code for updating beliefs after the new evidence is calculated
 ```py
 P_i_E = [[0 for _ in G.nodes()] for _ in G.nodes()]
 
@@ -22,8 +22,14 @@ for a in lst_2:
     
 ```
 Question 1: what is this P_i_E list calculating/representing? Is it just part of the calculation updating the posterior belief?
+
 Question 2: How is she checking if a node is a neighbor? Is this the second nested if statement?
+
 Question 3: General - does it matter the order in which you update a bayesian agent's beliefs? Does the order matter in determining the outcome?
+
+Question 4: Why is she shuffling the order of the lists? Is this because the order of updating beliefs does matter, so she tries to randomize this variability?
+
+**My Translation of this**
 
 I changed this code to the following:
 ```py
