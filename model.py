@@ -55,9 +55,3 @@ def timestep(graph: nx.Graph):
                 node_data['b_success_rate'] = calculate_posterior(node_data['b_success_rate'], neighbor_evidence)
 
     return graph
-
-mainGraph = initialize_graph('wheel', 15)
-timestamps = 50
-for i in range(timestamps):
-    timestep(mainGraph)
-print(mainGraph)

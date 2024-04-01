@@ -29,7 +29,7 @@ Question 3: General - does it matter the order in which you update a bayesian ag
 
 Question 4: Why is she shuffling the order of the lists? Is this because the order of updating beliefs does matter, so she tries to randomize this variability?
 
-**My Translation of this**
+**My Translation of code**
 
 I changed this code to the following:
 ```py
