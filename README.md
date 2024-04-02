@@ -27,6 +27,10 @@ These formulas are are drawn from the lines of code here:
 P_i_E[a][n] = ((objectiveB ** evidence_givenB[n]) * ((1 - objectiveB) ** (noofpulls - evidence_givenB[n])) * B_posterior_probability[a]) + (((1 - objectiveB) ** evidence_givenB[n]) * (objectiveB ** (noofpulls - evidence_givenB[n])) * (1 - B_posterior_probability[a]))
 ```
 
+### Multiple Pulls
+If the agent is pulling the bandit arm multiple times, will this just return one number? 
+`evidence_givenB[n] = int(np.random.binomial(noofpulls, objectiveB, size=None))`
+
 ### Agent Choice - Updating Beliefs
 This is Wu's code for updating beliefs after the new evidence is calculated
 ```py
@@ -58,22 +62,32 @@ Question 4: Why is she shuffling the order of the lists? Is this because the ord
 I changed this code to the following:
 ```py
 # define function to calculate posterior belief
-def calculate_posterior(pH: float, pEH: float):
-    pE = pEH * pH + (1 - pEH) * (1 - pH)
-    return (pEH * pH) / pE
+def calculate_posterior(prior_belief: float, evidence: float) -> float:
+    # Calculate likelihood
+    pEH_likelihood = success_rate
+    
+    # Calculate normalization constant
+    pE_evidence = (pEH_likelihood * prior_belief) + (1 - pEH_likelihood) * (1 - prior_belief)
+
+    # Calculate posterior belief using Bayes' theorem
+    posterior = (pEH_likelihood * prior_belief) / pE_evidence
+    
+    return posterior
 
 # update the beliefs, based on evidence and neighbors
-for node, nodeData in graph.nodes(data=True):
+for node, node_data in graph.nodes(data=True):
     neighbors = graph.neighbors(node)
     # update belief of "b" on own evidence gathered
-    if nodeData['b_evidence'] is not None:
-        nodeData['b_success_rate'] = calculate_posterior(nodeData['b_success_rate'], nodeData['b_evidence'])
+    if node_data['b_evidence'] is not None:
+        node_data['b_success_rate'] = calculate_posterior(node_data['b_success_rate'], node_data['b_evidence'])
     
     # update node belief of "b" based on evidence gathered by neighbors
     for neighbor_node in neighbors:
         neighbor_evidence = graph.nodes[neighbor_node]['b_evidence']
         if neighbor_evidence is not None:
-            nodeData['b_success_rate'] = calculate_posterior(nodeData['b_success_rate'], neighbor_evidence)
+            node_data['b_success_rate'] = calculate_posterior(node_data['b_success_rate'], neighbor_evidence)
+
+return graph
 ```
 
 ### Break Condition Metrics
