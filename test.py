@@ -8,7 +8,7 @@ median_vals = []
 numerical_keys = {key for node, data in initial.nodes(data=True) for key in data if isinstance(data[key], (int, float, complex))}
 print("initial graph data", initial.nodes(data=True))
 print("/n")
-timesteps = 10
+timesteps = 1
 print("b belief at before", [data['b_success_rate'] for node,data in initial.nodes(data=True)])
 for _ in range(timesteps):
     updated_graph = timestep(initial)

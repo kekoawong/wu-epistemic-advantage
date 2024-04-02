@@ -20,6 +20,9 @@ def initialize_graph(graphType: Literal['cycle', 'wheel', 'complete'], numNodes:
     return graph
 
 def timestep(graph: nx.Graph):
+    # experimental constants
+    num_pulls = 1
+    success_rate = 0.51
     # run the experiments in all the nodes
     for _node, node_data in graph.nodes(data=True):
         # agent pulls the "a" bandit arm
@@ -29,24 +32,21 @@ def timestep(graph: nx.Graph):
 
         # agent pulls the "b" bandit arm
         else:
-            # run the experiment
-            num_pulls = 1
-            success_rate = 0.51
+            # agent collects evidence
             node_data['b_evidence'] = int(np.random.binomial(num_pulls, success_rate, size=None))
 
     # define function to calculate posterior belief
     def calculate_posterior(prior_belief: float, evidence: float) -> float:
-        if prior_belief == 1 or prior_belief == 0:
-            return prior_belief
         # Calculate likelihood
-        pEH_likelihood = evidence * prior_belief + (1 - evidence) * (1 - prior_belief)
+        pEH_likelihood = (success_rate ** evidence) * ((1 - success_rate) ** (num_pulls - evidence))
         
         # Calculate normalization constant
-        pE_evidence = evidence * prior_belief + (1 - evidence) * (1 - prior_belief)
+        pE_evidence = (success_rate ** evidence) * ((1 - success_rate) ** (num_pulls - evidence)) * prior_belief + ((1 - success_rate) ** evidence) * (success_rate * (num_pulls - evidence)) * (1 - prior_belief)
         
         # Calculate posterior belief using Bayes' theorem
         posterior = (pEH_likelihood * prior_belief) / pE_evidence
-        print("prior", prior_belief, "evidence", evidence, "likelihood", pEH_likelihood, "Posterior", posterior, "equals", prior_belief == posterior)
+        print(f"Updating on evidence {evidence}")
+        print(f"{pEH_likelihood} * {prior_belief} / {pE_evidence} = {posterior}")
         
         return posterior
     
