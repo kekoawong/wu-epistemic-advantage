@@ -38,11 +38,13 @@ def timestep(graph: nx.Graph):
     # define function to calculate posterior belief
     def calculate_posterior(prior_belief: float, evidence: float) -> float:
         # Calculate likelihood
-        pEH_likelihood = (success_rate ** evidence) * ((1 - success_rate) ** (num_pulls - evidence))
+        # pEH_likelihood = (success_rate ** evidence) * ((1 - success_rate) ** (num_pulls - evidence))
+        pEH_likelihood = success_rate
         
         # Calculate normalization constant
-        pE_evidence = (success_rate ** evidence) * ((1 - success_rate) ** (num_pulls - evidence)) * prior_belief + ((1 - success_rate) ** evidence) * (success_rate * (num_pulls - evidence)) * (1 - prior_belief)
-        
+        # pE_evidence = (success_rate ** evidence) * ((1 - success_rate) ** (num_pulls - evidence)) * prior_belief + ((1 - success_rate) ** evidence) * (success_rate * (num_pulls - evidence)) * (1 - prior_belief)
+        pE_evidence = (pEH_likelihood * prior_belief) + (1 - pEH_likelihood) * (1 - prior_belief)
+
         # Calculate posterior belief using Bayes' theorem
         posterior = (pEH_likelihood * prior_belief) / pE_evidence
         print(f"Updating on evidence {evidence}")
