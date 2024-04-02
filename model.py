@@ -35,11 +35,20 @@ def timestep(graph: nx.Graph):
             node_data['b_evidence'] = int(np.random.binomial(num_pulls, success_rate, size=None))
 
     # define function to calculate posterior belief
-    def calculate_posterior(pH: float, pEH: float):
-        if pH <= 0 or pH >= 1: 
-            return pH
-        pE = pEH * pH + (1 - pEH) * (1 - pH)
-        return (pEH * pH) / pE
+    def calculate_posterior(prior_belief: float, evidence: float) -> float:
+        if prior_belief == 1 or prior_belief == 0:
+            return prior_belief
+        # Calculate likelihood
+        pEH_likelihood = evidence * prior_belief + (1 - evidence) * (1 - prior_belief)
+        
+        # Calculate normalization constant
+        pE_evidence = evidence * prior_belief + (1 - evidence) * (1 - prior_belief)
+        
+        # Calculate posterior belief using Bayes' theorem
+        posterior = (pEH_likelihood * prior_belief) / pE_evidence
+        print("prior", prior_belief, "evidence", evidence, "likelihood", pEH_likelihood, "Posterior", posterior, "equals", prior_belief == posterior)
+        
+        return posterior
     
     # update the beliefs, based on evidence and neighbors
     for node, node_data in graph.nodes(data=True):

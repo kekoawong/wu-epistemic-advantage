@@ -3,6 +3,30 @@ A model of the epistemic advantage at the margins
 
 ## Questions
 
+## Updating Posterior Belief
+
+Wus seems to update the posterior probability using the following value calculated for P(E)
+<img src="img/main.png" width="600">
+
+The following are the parameters defined:
+
+* **ObjB = 0.51**, which describes the actual probability that B will return a successful result. This is also uses this where the agent gathers evidence in the line `evidence_givenB[n] = int(np.random.binomial(noofpulls, objectiveB, size=None))`
+
+* **noofpulls = 1**, which seems to define how many times an agent runs an experiment, hence the naming of number of bandit arm pulls. This is also used in the line to gather evidence `evidence_givenB[n] = int(np.random.binomial(noofpulls, objectiveB, size=None))`
+
+Inputting these parameters into the formula, it can be simplified into
+<img src="img/simplified.png" width="600">
+
+**My biggest questions is the following:**
+
+1. Why is the ObjB parameter included in updating the agent's belief? Wouldn't the actual probability of the occurance of B be unknown to the agent, as it is something that they are attempting to figure out by updating their posterior?
+
+
+These formulas are are drawn from the lines of code here:
+```py
+P_i_E[a][n] = ((objectiveB ** evidence_givenB[n]) * ((1 - objectiveB) ** (noofpulls - evidence_givenB[n])) * B_posterior_probability[a]) + (((1 - objectiveB) ** evidence_givenB[n]) * (objectiveB ** (noofpulls - evidence_givenB[n])) * (1 - B_posterior_probability[a]))
+```
+
 ### Agent Choice - Updating Beliefs
 This is Wu's code for updating beliefs after the new evidence is calculated
 ```py

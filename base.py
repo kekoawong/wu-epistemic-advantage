@@ -42,6 +42,7 @@ def AgentChoice(B_probability: list[float], average_payoff: list[list[float]], a
             # why is she only updating if the probability is greater than 0.5? Should all nodes listen, no matter the bandit arm that they pull?
             if B_probability[n] > 0.5:
                 if ((a >= (len(lst) / d)) and (n >= (len(lst) / d))) or (a < (len(lst) / d)):
+                    # objective B is the actual probability that it occurs? Would this be known by the agent?
                     P_i_E[a][n] = ((objectiveB ** evidence_givenB[n]) * ((1 - objectiveB) ** (noofpulls - evidence_givenB[n])) * B_posterior_probability[a]) + (((1 - objectiveB) ** evidence_givenB[n]) * (objectiveB ** (noofpulls - evidence_givenB[n])) * (1 - B_posterior_probability[a]))
                     B_posterior_probability[a] = ((objectiveB ** evidence_givenB[n]) * ((1 - objectiveB) ** (noofpulls - evidence_givenB[n])) * B_posterior_probability[a]) / P_i_E[a][n]
     
