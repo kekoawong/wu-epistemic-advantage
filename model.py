@@ -3,6 +3,12 @@ import networkx as nx
 import numpy as np
 import random
 
+# Define Parameters
+num_agents = 3 # number of nodes in network, alternates between 3, 6, 12, 18
+proportion_marginalized = 1/6 # % population marginalized, alternates between 1/6, 1/3, 1/2, 2/3
+num_pulls = 1 # number of arm pulls, alternates between 1, 5, 10, 20
+objective_b = 0.51 # actual probability of B arm yielding success, alternates between .51, .55, .6, .7, .8
+
 def initialize_graph(graphType: Literal['cycle', 'wheel', 'complete'], numNodes: int):
     graph: nx.Graph = nx.complete_graph(numNodes)
     # Initialize all the nodes to this initial data
@@ -36,9 +42,9 @@ def timestep(graph: nx.Graph):
             node_data['b_evidence'] = int(np.random.binomial(num_pulls, success_rate, size=None))
 
     # define function to calculate posterior belief
-    def calculate_posterior(prior_belief: float, evidence: float) -> float:
+    def calculate_posterior(prior_belief: float, num_evidence: float) -> float:
         # Calculate likelihood, will be either the success rate
-        pEH_likelihood = (success_rate ** evidence) * ((1 - success_rate) ** (1 - evidence))
+        pEH_likelihood = (success_rate ** num_evidence) * ((1 - success_rate) ** (1 - num_evidence))
         
         # Calculate normalization constant
         pE_evidence = (pEH_likelihood * prior_belief) + (1 - pEH_likelihood) * (1 - prior_belief)
