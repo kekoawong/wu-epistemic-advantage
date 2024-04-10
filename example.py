@@ -1,6 +1,5 @@
 from modelpy import Model
 import networkx as nx
-import numpy as np
 import random
 
 # Inherit class from modelpy
@@ -16,6 +15,7 @@ class MyModel(Model):
         self.graph: nx.Graph = None
 
     def initialize_graph(self):
+        # initialize graph shape
         if self.graph_type == 'complete':
             self.graph = nx.complete_graph(self.num_nodes)
         elif self.graph_type == 'cycle':
@@ -23,27 +23,14 @@ class MyModel(Model):
         else:
             self.graph = nx.wheel_graph(self.num_nodes)
         
-        # Initialize all the node data for a bandit model
+        # Initialize sample data for all nodes
         for node in self.graph.nodes():
             initial_data = {
-                # bandit arm A is set to a 0.5 success rate in the decision process
-                'a_success_rate': 0.5,
-                # bandit arm B is a learned parameter for the agent. Initialize randomly
-                'b_success_rate': random.uniform(0.01, 0.99),
-                # agent evidence learned, will be used to update their belief and others in the network
-                'b_evidence': None,
+                'data_value': random.uniform(1, 100),
             }
             self.graph.nodes[node].update(initial_data)
 
     def timestep(self):
-        # run the experiments in all the nodes
         for _node, node_data in self.graph.nodes(data=True):
-            # agent pulls the "a" bandit arm
-            if node_data['a_success_rate'] > node_data['b_success_rate']:
-                # agent won't have any new evidence gathered for b
-                node_data['b_evidence'] = None
-
-            # agent pulls the "b" bandit arm
-            else:
-                # agent collects evidence
-                node_data['b_evidence'] = int(np.random.binomial(1, self.objective_b, size=None))
+            # example mutate the node data
+            node_data['data_value'] += node_data['data_value'] + 1
