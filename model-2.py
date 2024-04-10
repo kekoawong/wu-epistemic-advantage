@@ -46,7 +46,7 @@ class EpistemicAdvantageModel:
             pEH_likelihood = (self.objective_b ** num_evidence) * ((1 - self.objective_b) ** (self.num_pulls - num_evidence))
             
             # Calculate normalization constant
-            pE_evidence = (pEH_likelihood * prior_belief) + (1 - pEH_likelihood) * (1 - prior_belief)
+            pE_evidence = (pEH_likelihood * prior_belief) + ((1 - self.objective_b)**num_evidence) * (self.objective_b ** (self.num_pulls - num_evidence)) * (1 - prior_belief)
 
             # Calculate posterior belief using Bayes' theorem
             posterior = (pEH_likelihood * prior_belief) / pE_evidence
@@ -54,16 +54,16 @@ class EpistemicAdvantageModel:
             return posterior
         
         # update the beliefs, based on evidence and neighbors
-        for node, node_data in graph.nodes(data=True):
-            neighbors = graph.neighbors(node)
+        for node, node_data in self.graph.nodes(data=True):
+            neighbors = self.graph.neighbors(node)
             # update belief of "b" on own evidence gathered
             if node_data['b_evidence'] is not None:
                 node_data['b_success_rate'] = calculate_posterior(node_data['b_success_rate'], node_data['b_evidence'])
             
             # update node belief of "b" based on evidence gathered by neighbors
             for neighbor_node in neighbors:
-                neighbor_evidence = graph.nodes[neighbor_node]['b_evidence']
+                neighbor_evidence = self.graph.nodes[neighbor_node]['b_evidence']
                 if neighbor_evidence is not None:
                     node_data['b_success_rate'] = calculate_posterior(node_data['b_success_rate'], neighbor_evidence)
 
-        return graph
+        return self.graph

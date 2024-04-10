@@ -42,17 +42,17 @@ def timestep(graph: nx.Graph):
             node_data['b_evidence'] = int(np.random.binomial(num_pulls, success_rate, size=None))
 
     # define function to calculate posterior belief
-    def calculate_posterior(prior_belief: float, num_evidence: float) -> float:
-        # Calculate likelihood, will be either the success rate
-        pEH_likelihood = (success_rate ** num_evidence) * ((1 - success_rate) ** (1 - num_evidence))
-        
-        # Calculate normalization constant
-        pE_evidence = (pEH_likelihood * prior_belief) + (1 - pEH_likelihood) * (1 - prior_belief)
+        def calculate_posterior(prior_belief: float, num_evidence: float) -> float:
+            # Calculate likelihood, will be either the success rate
+            pEH_likelihood = (objective_b ** num_evidence) * ((1 - objective_b) ** (num_pulls - num_evidence))
+            
+            # Calculate normalization constant
+            pE_evidence = (pEH_likelihood * prior_belief) + ((1 - objective_b)**num_evidence) * (objective_b ** (num_pulls - num_evidence)) * (1 - prior_belief)
 
-        # Calculate posterior belief using Bayes' theorem
-        posterior = (pEH_likelihood * prior_belief) / pE_evidence
-        
-        return posterior
+            # Calculate posterior belief using Bayes' theorem
+            posterior = (pEH_likelihood * prior_belief) / pE_evidence
+            
+            return posterior
     
     # update the beliefs, based on evidence and neighbors
     for node, node_data in graph.nodes(data=True):
