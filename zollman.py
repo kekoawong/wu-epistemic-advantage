@@ -1,11 +1,10 @@
-from modelpy import Model
 import networkx as nx
 import numpy as np
 import random
 
 # Inherit class from modelpy
 # https://docs.python.org/3/tutorial/classes.html#inheritance
-class ZollmanBandit(Model):
+class ZollmanBandit:
     def __init__(self):
         # Define Parameters
         self.num_nodes = 3

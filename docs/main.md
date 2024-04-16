@@ -1,5 +1,5 @@
 # Getting Started
-Currently, **modelpy** is currently configured to work exclusively with graphical models (with a focus on bandits) using the [networkx](https://networkx.org/) package. 
+Currently, **Modelpy** is currently configured to work exclusively with graphical models (with a focus on bandits) using the [networkx](https://networkx.org/) package. 
 
 We are working with researchers to add support for more models types across domains. To help develop this open source framework for your research domain, reach out here.
 
@@ -90,7 +90,7 @@ class MyModel(Model):
 ```
 
 ### 6: Review
-Now, your **model.py** should look something like the following:
+Now, your **model.py** file should look something like the following:
 
 ```python
 from modelpy import Model
