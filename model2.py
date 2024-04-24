@@ -13,8 +13,8 @@ class EpistemicAdvantageModel:
         # initialize the graph
         self.graph: nx.Graph = None
 
-    def initialize_graph(self, numNodes: int):
-        self.graph = nx.complete_graph(numNodes)
+    def initialize_graph(self):
+        self.graph = nx.complete_graph(self.num_agents)
         # Initialize all the nodes to this initial data
         for node in self.graph.nodes():
             initial_data = {
