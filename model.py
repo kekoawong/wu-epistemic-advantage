@@ -4,6 +4,8 @@ import random
 
 class EpistemicAdvantageModel:
     def __init__(self):
+        # Define model type
+        self.model_type = "base" # can be "base", "variation1", "variation2"
         # Define Parameters
         self.num_agents = 3 # number of nodes in network, alternates between 3, 6, 12, 18
         self.proportion_marginalized = 1/6 # % population marginalized, alternates between 1/6, 1/3, 1/2, 2/3

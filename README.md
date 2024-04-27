@@ -28,7 +28,7 @@ Only difference from the base model is the network structure, where agents exhib
     * P outgroup (0.3, 0.35, 0.4, 0.45, 0.5)
 
 ### Variation 2: One-sided testimonial devaluation
-Simulates testimonial devaluation using Jeffrey conditionalization, only differing from the base model in updating rules.
+Simulates testimonial devaluation using Jeffrey conditionalization. Differs from the base model in the way that agents beliefs are updated.
 * Size of network (3, 6, 12, 18)
 * Number of pulls per round (1, 5, 10, 20)
 * Probability of B (0.51, 0.55, 0.6, 0.7, 0.8)
