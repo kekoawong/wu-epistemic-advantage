@@ -68,14 +68,14 @@ class EpistemicAdvantageModel:
             # update node belief of "b" based on evidence gathered by neighbors
             for neighbor_node in neighbors:
                 neighbor_evidence = self.graph.nodes[neighbor_node]['b_evidence']
-                # neighbor_type = self.graph.nodes[neighbor_node]['type']
+                neighbor_type = self.graph.nodes[neighbor_node]['type']
 
                 # update from all neighbors if current node is marginalized
-                if neighbor_evidence is not None:
+                if node_data['type'] == 'marginalized' and neighbor_evidence is not None:
                     node_data['b_success_rate'] = calculate_posterior(node_data['b_success_rate'], neighbor_evidence)
 
                 # only update from dominant agents if current node is dominant
-                # elif neighbor_type != 'marginalized' and neighbor_evidence is not None:
-                #     node_data['b_success_rate'] = calculate_posterior(node_data['b_success_rate'], neighbor_evidence)
+                elif neighbor_type != 'marginalized' and neighbor_evidence is not None:
+                    node_data['b_success_rate'] = calculate_posterior(node_data['b_success_rate'], neighbor_evidence)
 
         return self.graph
