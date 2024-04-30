@@ -27,7 +27,7 @@ class EpistemicAdvantageModel:
                 # agent evidence learned, will be used to update their belief and others in the network
                 'b_evidence': None,
                 # population type, 'marginalized' or 'dominant'
-                # 'type': 'dominant' if random.random() > self.proportion_marginalized else 'marginalized'
+                'type': 'dominant' if random.random() > self.proportion_marginalized else 'marginalized'
             }
             self.graph.nodes[node].update(initial_data)
         return self.graph
